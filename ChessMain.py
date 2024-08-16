@@ -62,8 +62,8 @@ def main():
                     print(move.getChessNotation())
                     if move in validMoves:
                         gs.makeMove(move)
-                    gs.makeMove(move)
-                    sqSelected = () #reset user clicks
+                        moveMade = True
+                    sqSelected = () # reset user clicks
                     playerClicks = []
                     
             # key handler
@@ -73,7 +73,7 @@ def main():
                     moveMade = True
                 
         if moveMade:
-            validMoves = gs.getValidMoves
+            validMoves = gs.getValidMoves()
             moveMade = False
             
         drawGameState(screen, gs)
