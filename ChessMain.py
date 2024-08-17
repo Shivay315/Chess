@@ -21,10 +21,10 @@ def loadImages():
         IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
     # NOTE: we can access an image by saying 'IMAGES['wP']'
     
+
 '''
 The main driver for our code. This will handle user input and updating the graphics
 '''
-
 def main():
     p.init()
     screen = p.display.set_mode((WIDTH, HEIGHT))
@@ -60,12 +60,15 @@ def main():
                 if len(playerClicks) == 2: # after 2nd click
                     move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
                     print(move.getChessNotation())
-                    if move in validMoves:
-                        gs.makeMove(move)
-                        moveMade = True
-                    sqSelected = () # reset user clicks
-                    playerClicks = []
-                    
+                    for i in range(len(validMoves)):
+                        if move == validMoves[i]:
+                            gs.makeMove(validMoves[i])
+                            moveMade = True
+                            sqSelected = () # reset user clicks
+                            playerClicks = []
+                    if not moveMade:
+                        playerClicks = [sqSelected]
+                        
             # key handler
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z: # undo when 'z' is pressed
@@ -93,7 +96,7 @@ def drawGameState(screen, gs):
 Draw the squares on the board. The top left square is always light.
 '''
 def drawBoard(screen):
-    colors = [p.Color("floral white"), p.Color("chartreuse4")]
+    colors = [p.Color("lightgoldenrodyellow"), p.Color("dodgerblue4")]
     for r in range(DIMENSION):
         for c in range(DIMENSION):
             color = colors[((r+c) % 2)]
@@ -111,6 +114,8 @@ def drawPieces(screen, board):
                 screen.blit(IMAGES[piece], p.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
                 
 
-
+'''
+Calling the main function using the python prefered way
+'''
 if __name__ == "__main__":
     main()
