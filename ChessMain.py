@@ -59,11 +59,11 @@ def main():
                     playerClicks.append(sqSelected) # append both 1st and 2nd clicks?>.
                 if len(playerClicks) == 2: # after 2nd click
                     move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                    print(move.getChessNotation())
                     for i in range(len(validMoves)):
                         if move == validMoves[i]:
                             gs.makeMove(validMoves[i])
                             moveMade = True
+                            print(move.getChessNotation())
                             sqSelected = () # reset user clicks
                             playerClicks = []
                     if not moveMade:
@@ -79,7 +79,7 @@ def main():
             validMoves = gs.getValidMoves()
             moveMade = False
             
-        drawGameState(screen, gs)
+        drawGameState(screen, gs, validMoves, sqSelected)
         clock.tick(MAX_FPS)
         p.display.flip()
 
@@ -87,16 +87,45 @@ def main():
 '''
 Responsible for all the graphics within a current game state.
 '''
-def drawGameState(screen, gs):
+def drawGameState(screen, gs, validMoves, sqSelected):
     drawBoard(screen) # draw squares on the board
+    highlightSquares(screen, gs, validMoves, sqSelected)
     drawPieces(screen, gs.board) # draw pieces on top of those squares
+    
 
+'''
+Highlight square selected and moves for piece selected
+'''
+def highlightSquares(screen, gs, validMoves, sqSelected):
+    if sqSelected != ():
+        r, c = sqSelected
+        if gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'): #sqSelected is a piece that can be moved
+            # highlight selected square
+            s = p.Surface((SQ_SIZE, SQ_SIZE))
+            s.set_alpha(255) # transperancy value -> 0 transparent; 255 opaque
+            t = p.Surface((SQ_SIZE, SQ_SIZE), p.SRCALPHA, 32)
+            # t.fill((0,0,0,0))
+            t = t.convert_alpha()
+            t.set_alpha(100)
+            center = (SQ_SIZE // 2, SQ_SIZE // 2)
+            radius = 10
+            s.fill(p.Color('pale turquoise'))
+            screen.blit(s, (c*SQ_SIZE, r*SQ_SIZE))
+            
+            # highlight moves from that square
+            # t.fill(p.Color('darkslategray'))
+            t.fill(p.Color(0,0,0,0))
+            p.draw.circle(t, 'black', center, radius)
+            # circle = p.draw.circle(t, 'grey', center, radius)
+            for move in validMoves:
+                if move.startRow == r and move.startCol == c:
+                    screen.blit(t, (SQ_SIZE*move.endCol, SQ_SIZE*move.endRow))
 
 '''
 Draw the squares on the board. The top left square is always light.
 '''
 def drawBoard(screen):
-    colors = [p.Color("lightgoldenrodyellow"), p.Color("dodgerblue4")]
+    colors = [p.Color('aliceblue'), p.Color("dodgerblue4")]
     for r in range(DIMENSION):
         for c in range(DIMENSION):
             color = colors[((r+c) % 2)]
