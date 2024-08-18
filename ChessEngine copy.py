@@ -73,9 +73,6 @@ class GameState():
         elif move.pieceMoved == 'bK':
             self.blackKingLocation = (move.endRow, move.endCol)
             
-        # pawm promotion
-        if move.isPawmPromotion:
-            pass
         
         
     '''
